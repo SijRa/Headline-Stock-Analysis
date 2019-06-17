@@ -1,2 +1,2 @@
 # Headline-Stock-Analysis
-An attempt at sentiment analysis and its effects on stock prices using facebook as an example
+An attempt at analysing the effects related top news story headlines (from Reuters) have on day-to-day stock prices for Facebook 
