@@ -108,4 +108,4 @@ article_dates = stockObject.Get_DateColumn()
 
 # Start collection
 Start_Headline_Collection(article_dates)
-stockObject.Create_CSV(headlines)
+stockObject.Create_Headlines_CSV(headlines)
