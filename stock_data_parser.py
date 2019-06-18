@@ -8,11 +8,14 @@ class Stock_Data_Object:
     # Memeber variables
     stock_dates = []
     
+    # Opening and Closing Prices
     stock_open_close = []
-    price_diff_normalised = {}
+    price_open_close_normalised = {}
 
-    prices = []
-    
+    # Day Highest and Lowest Prices
+    stock_high_low = []
+    price_high_low_normalied = []
+
     fileName = ""
 
     # Constructor
@@ -25,9 +28,13 @@ class Stock_Data_Object:
                 if(row[0] == 'Date'):
                     continue
                 self.stock_dates.append(row[0]) # Dates
+                
                 # Calculate difference between close and open prices
                 price_difference = float(row[4]) - float(row[1])
                 self.stock_open_close.append(price_difference)
+                # Calculate difference between high and low prices
+                range_diff = float(row[2]) - float(row[3])
+                self.stock_high_low.append(range_diff)
 
     def Normalise_Open_Close_Values(self):
         """
@@ -38,9 +45,18 @@ class Stock_Data_Object:
         index = 0 # Track index of stock_open_close value to use
         for date in self.stock_dates:
             normalised_value = (2 * ((self.stock_open_close[index] - min_value) / (max_value - min_value)) - 1)
-            self.prices.append(normalised_value)
-            self.price_diff_normalised[date] = normalised_value
+            self.price_open_close_normalised[date] = normalised_value
             index += 1
+    
+    def Normalise_High_Low_Values(self):
+        """
+        Normalise values to a range between 0,1 
+        """
+        max_value = max(self.stock_high_low)
+        min_value = min(self.stock_high_low)
+        for diff in self.stock_high_low:
+            normalised_value = ((diff - min_value) / (max_value - min_value))
+            self.price_high_low_normalied.append(normalised_value)
         
     def Get_DateColumn(self):
         """
@@ -48,6 +64,18 @@ class Stock_Data_Object:
         """
         print("Length of stock_dates: %d" % len(self.stock_dates)) 
         return self.stock_dates
+    
+    def Create_HighLow_CSV(self, highLowList):
+        """
+        Create csv file using a dictionary (Normalised Prices)
+        """
+        with open('price_high_low.csv', 'w', encoding='utf-8', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Date"] + ["High/Low (Normalised)"])
+            index = 0
+            for entry in highLowList:
+                writer.writerow([self.stock_dates[index]] + [entry])
+                index += 1
     
     def Create_PriceDiff_CSV(self, dictionary):
         """
@@ -63,17 +91,18 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Headlines)
         """
-        with open('headlines.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open('headlines_non_empty.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["Headline"])
             for key in dictionary:
-                writer.writerow([key] + [dictionary[key]])
-    
-    def PrintTestData(self):
-        print(max(self.prices))
-        print(min(self.prices))
+                if(dictionary[key] != 'empty'):
+                    writer.writerow([key] + [dictionary[key]])
 
 # Create stock object
 stockObject = Stock_Data_Object('fb-stock-history')
+
 stockObject.Normalise_Open_Close_Values()
-stockObject.Create_PriceDiff_CSV(stockObject.price_diff_normalised)
+stockObject.Create_PriceDiff_CSV(stockObject.price_open_close_normalised)
+
+stockObject.Normalise_High_Low_Values()
+stockObject.Create_HighLow_CSV(stockObject.price_high_low_normalied)
