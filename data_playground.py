@@ -3,10 +3,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+# Play with data here
+
+
 stock_dates = []
 high_low_values = []
 
-fileName = "price_high_low.csv"
+fileName = "price_difference_normalised.csv"
 
 # Read data
 with open(fileName, 'r', encoding='utf-8') as csvfile:
