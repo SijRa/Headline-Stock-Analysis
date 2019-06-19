@@ -28,7 +28,7 @@ class Stock_Data_Object:
                 if(row[0] == 'Date'):
                     continue
                 self.stock_dates.append(row[0]) # Dates
-                
+
                 # Calculate difference between close and open prices
                 price_difference = float(row[4]) - float(row[1])
                 self.stock_open_close.append(price_difference)
@@ -69,7 +69,7 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Normalised Prices)
         """
-        with open('price_high_low.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open('price_high_low_normalised.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["High/Low (Normalised)"])
             index = 0
@@ -91,7 +91,7 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Headlines)
         """
-        with open('headlines_non_empty.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open('headlines_non_empty_fb.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["Headline"])
             for key in dictionary:
@@ -99,7 +99,7 @@ class Stock_Data_Object:
                     writer.writerow([key] + [dictionary[key]])
 
 # Create stock object
-stockObject = Stock_Data_Object('fb-stock-history')
+stockObject = Stock_Data_Object('AAPL')
 
 stockObject.Normalise_Open_Close_Values()
 stockObject.Create_PriceDiff_CSV(stockObject.price_open_close_normalised)
