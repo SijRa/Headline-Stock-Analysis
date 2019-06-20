@@ -6,10 +6,16 @@ from stock_data_parser import Stock_Data_Object
 import time
 
 # All collected headlines
-headlines = {}
+Date_Headline_Dict = {}
 
-# Start url
-reuter_FacebookInc_url = 'https://www.reuters.com/finance/stocks/company-news/FB.OQ'
+# Reuter FAANG URLS
+URLS = {
+    'FB':'https://www.reuters.com/finance/stocks/company-news/FB.OQ',
+    'APPL':'https://www.reuters.com/finance/stocks/company-news/AAPL.OQ',
+    'AMZN':'https://www.reuters.com/finance/stocks/company-news/AMZN.OQ',
+    'NFLX':'https://www.reuters.com/finance/stocks/overview/NFLX.OQ',
+    'GOOG':'https://www.reuters.com/finance/stocks/company-news/GOOG.OQ'
+}
 
 def Convert_Date_To_Weekday(dt):
     """
@@ -60,38 +66,42 @@ def Get_Headline_Specific_Date(date):
     Get headline from a specific date
     """
     date_url = Date_Url_String(date)
-    page = Get_Page_Soup(reuter_FacebookInc_url + date_url)
+    page = Get_Page_Soup(URLS[stock_ticker] + date_url)
     story_headline = Get_Headline(page)
     Add_To_Headlines_Dict(date,story_headline)
     print(date + " : " + story_headline)
-    #time.sleep(1)
 
-def Start_Headline_Collection(dateList):
+def Check_Weekend_Headlines(date, last_date):
     """
-    Start headline collection
+    Extracts headlines for the weekend 
     """
-    incomingWeekend = False
-    for date in dateList:
-        # Ignore incoming weekend data (its the future)
-        if(Convert_Date_To_Weekday(date) == 4 and date != '2019-06-14'):
-            incomingWeekend = True
+    if(date != last_date):
+        if(Convert_Date_To_Weekday(date) == 4):
+            Collect_Weekend_Headlines(date)
+
+
+def Start_Headline_Collection(date_list):
+    """
+    Collect headlines from a set of dates
+    """
+    url = URLS[stock_ticker]
+    for date in date_list:
         date_url = Date_Url_String(date)
-        page = Get_Page_Soup(reuter_FacebookInc_url + date_url)
+        page = Get_Page_Soup(url + date_url)
         story_headline = Get_Headline(page)
         Add_To_Headlines_Dict(date,story_headline)
         print(date + " : " + story_headline)
-        time.sleep(1)
-        if(incomingWeekend):
-            Collect_Weekend_Headlines(date)
-            incomingWeekend = False
+        time.sleep(1) # Sleep to avoid blacklist
+        Check_Weekend_Headlines(date,date_list[-1])
 
-def Collect_Weekend_Headlines(fridayDate):
+def Collect_Weekend_Headlines(current_date):
     """
     Collect headlines from the weekend
     """
     weekend = []
-    weekend.append((datetime.datetime.strptime(fridayDate, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d'))
-    weekend.append((datetime.datetime.strptime(fridayDate, '%Y-%m-%d') + timedelta(days=2)).strftime('%Y-%m-%d'))
+    # Add Saturday and Sunday dates
+    weekend.append((datetime.datetime.strptime(current_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d'))
+    weekend.append((datetime.datetime.strptime(current_date, '%Y-%m-%d') + timedelta(days=2)).strftime('%Y-%m-%d'))
     for date in weekend:
         Get_Headline_Specific_Date(date)
 
@@ -99,13 +109,16 @@ def Add_To_Headlines_Dict(date, headline):
     """
     Appends key/value pair to headlines dictionary
     """
-    headlines[date] = headline
+    Date_Headline_Dict[date] = headline
+
+# Choose stock
+stock_ticker = "FB"
 
 # Create stock object
-stockObject = Stock_Data_Object('fb-stock-history')
+stockObject = Stock_Data_Object(stock_ticker)
 # Get stock history dates
 article_dates = stockObject.Get_DateColumn()
 
 # Start collection
 Start_Headline_Collection(article_dates)
-stockObject.Create_Headlines_CSV(headlines)
+stockObject.Create_Headlines_CSV(Date_Headline_Dict)

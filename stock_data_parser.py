@@ -28,7 +28,6 @@ class Stock_Data_Object:
                 if(row[0] == 'Date'):
                     continue
                 self.stock_dates.append(row[0]) # Dates
-
                 # Calculate difference between close and open prices
                 price_difference = float(row[4]) - float(row[1])
                 self.stock_open_close.append(price_difference)
@@ -99,10 +98,11 @@ class Stock_Data_Object:
                     writer.writerow([key] + [dictionary[key]])
 
 # Create stock object
-stockObject = Stock_Data_Object('AAPL')
+stockObject = Stock_Data_Object('FB')
 
+#
 stockObject.Normalise_Open_Close_Values()
 stockObject.Create_PriceDiff_CSV(stockObject.price_open_close_normalised)
-
+#
 stockObject.Normalise_High_Low_Values()
 stockObject.Create_HighLow_CSV(stockObject.price_high_low_normalied)
