@@ -90,19 +90,9 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Headlines)
         """
-        with open('headlines_non_empty_fb.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open('test.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["Headline"])
             for key in dictionary:
                 if(dictionary[key] != 'empty'):
                     writer.writerow([key] + [dictionary[key]])
-
-# Create stock object
-stockObject = Stock_Data_Object('FB')
-
-#
-stockObject.Normalise_Open_Close_Values()
-stockObject.Create_PriceDiff_CSV(stockObject.price_open_close_normalised)
-#
-stockObject.Normalise_High_Low_Values()
-stockObject.Create_HighLow_CSV(stockObject.price_high_low_normalied)
