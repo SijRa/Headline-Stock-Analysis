@@ -16,7 +16,7 @@ class Stock_Data_Object:
     stock_high_low = []
     price_high_low_normalied = []
 
-    fileName = ""
+    fileName = ''
 
     # Constructor
     def __init__(self, fileName):
@@ -68,7 +68,7 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Normalised Prices)
         """
-        with open('price_high_low_normalised.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open(self.fileName + '_price_high_low_normalised.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["High/Low (Normalised)"])
             index = 0
@@ -80,19 +80,18 @@ class Stock_Data_Object:
         """
         Create csv file using a dictionary (Normalised Prices)
         """
-        with open('price_difference_normalised.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open(self.fileName +'_price_difference_normalised.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["Price (Normalised)"])
             for key in dictionary:
                 writer.writerow([key] + [dictionary[key]])
     
-    def Create_Headlines_CSV(self, dictionary):
+    def Create_Headlines_CSV(self, headlines):
         """
         Create csv file using a dictionary (Headlines)
         """
-        with open('test.csv', 'w', encoding='utf-8', newline='') as csvfile:
+        with open(self.fileName + '_Headlines' + '.csv', 'w', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Date"] + ["Headline"])
-            for key in dictionary:
-                if(dictionary[key] != 'empty'):
-                    writer.writerow([key] + [dictionary[key]])
+            for headline in headlines:
+                writer.writerow([headline[0]] + [headline[1]])
