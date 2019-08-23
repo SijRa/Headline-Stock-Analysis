@@ -126,7 +126,6 @@ def Check_Weekend_Headlines(date, last_date):
         if(Convert_Date_To_Weekday(date) == 4):
             Collect_Weekend_Headlines(date)
 
-
 def Start_Headline_Collection(date_list):
     """
     Collect headlines from a set of dates
